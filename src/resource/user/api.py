@@ -1,7 +1,7 @@
 from fastapi import Depends,HTTPException,APIRouter,Security
 from sqlalchemy.orm import Session
 from src.resource.user.schema import UserCreateSchema,UserLoginSchema
-from src.functionality.user import Create_User,Login_User,admin_access_all_task_view
+from src.functionality.user import Create_User,Login_User,admin_access_all_user_view,admin_access_to_user_delete
 from src.database.database import get_db
 from fastapi.security import HTTPAuthorizationCredentials,HTTPBearer
 from src.utils.utils import SECRET_KEY,ALGORITHM,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token
@@ -40,10 +40,18 @@ def new_access_token(refresh_token:HTTPAuthorizationCredentials=Security(securit
     )
     return{"access_token":new_access_token}
 
-@user_router.get("admin/access/",tags=["Admin"])
-def adm_acc_all_task_show(user_id:int,db:Session=Depends(get_db)):
+@user_router.get("/admin/access/",tags=["Admin"])
+def adm_acc_all_user_show(user_id:int, db:Session=Depends(get_db)):
     try:
-        user = admin_access_all_task_view(user_id=user_id,db=db)
+        user = admin_access_all_user_view(user_id=user_id,db=db)
+        return user
+    except Exception as e:
+        raise HTTPException(status_code=500,detail=str(e))
+
+@user_router.get("/admin/delete/",tags=["Admin"])
+def adm_acc_user_del(user:int,db:Session=Depends(get_db)):
+    try:
+        user = admin_access_to_user_delete(user=user,db=db)
         return user
     except Exception as e:
         raise HTTPException(status_code=500,detail=str(e))

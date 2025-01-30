@@ -45,9 +45,8 @@ def Login_User(user:UserLoginSchema,db: Session = Depends(get_db)):
         "token_type": "Bearer"
     }
 
-def admin_access_all_task_view(user_id:int,db:Session=Depends(get_db)):
+def admin_access_all_user_view(user_id:int,db:Session=Depends(get_db)):
     try:
-
         admin = db.query(UserModel).filter(UserModel.id == user_id).first()
 
         if admin.role != "admin":
@@ -61,5 +60,20 @@ def admin_access_all_task_view(user_id:int,db:Session=Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500,detail=str(e))
 
+def admin_access_to_user_delete(user:int,db:Session=Depends(get_db)):
+    try:
+        user1 = db.query(UserModel).filter(UserModel.id == user).first()
 
+        if user1.role != 'admin':
+            db.query(UserModel).delete()
+            raise HTTPException(status_code=403,detail="admin not found!")
         
+        if user1.role != 'user':
+            db.query(UserModel).delete()
+            return{
+                "massaeg":"all user are delete"
+            }
+        
+        db.commit
+    except Exception as e:  
+        raise HTTPException(status_code=400,detail=str(e))

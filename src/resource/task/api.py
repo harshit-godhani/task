@@ -7,7 +7,7 @@ from fastapi.security import HTTPBearer
 
 security = HTTPBearer()
 
-task_router = APIRouter(tags=["CURD task"])
+task_router = APIRouter(tags=["CRUD task"])
 
 @task_router.post("/create/task/")
 def reg_task(task:TaskCreateSchema,db:Session= Depends(get_db),token:str=Security(security)):
@@ -19,10 +19,11 @@ def reg_task(task:TaskCreateSchema,db:Session= Depends(get_db),token:str=Securit
     
     
 @task_router.patch("/update/task/")
-def log_task(task:TaskUpdateSchema,db:Session= Depends(get_db)):
+def log_task(task:TaskUpdateSchema,db:Session= Depends(get_db), token: str = Security(security)):
     try:
-        task = update_task(task=task,db=db)
+        task = update_task(task=task,db=db,token=token)
         return task
+
     except Exception as e:
         raise HTTPException(status_code=500,detail=str(e))
     
@@ -42,6 +43,6 @@ def del_task(task_id:int,db:Session=Depends(get_db)):
         task = delete_task(task_id=task_id,db=db)
         return task
     except Exception as e:
-        raise HTTPException(status_code=500,detail=str(e))
+        raise HTTPException(status_code=404,detail=str(e))
     
 

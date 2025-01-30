@@ -44,7 +44,9 @@ def get_task(onwer_id:int,db:Session=Depends(get_db)):
         "task_id":data.id
     }
 
-def update_task(task:TaskUpdateSchema,db:Session=Depends(get_db)):
+def update_task(task:TaskUpdateSchema,db:Session=Depends(get_db),token: str = Security(security)):
+
+    user = verify_token(token.credentials)
 
     data1 = db.query(TaskModel).filter(TaskModel.id == task.id).first()
     if not data1:
@@ -52,8 +54,7 @@ def update_task(task:TaskUpdateSchema,db:Session=Depends(get_db)):
     
     data1.title=task.title,
     data1.description=task.description,
-    data1.status=task.status,
-    data1.owner_id=task.owner_id
+    data1.status=task.status
 
     db.commit()
     return{
@@ -63,7 +64,7 @@ def update_task(task:TaskUpdateSchema,db:Session=Depends(get_db)):
     }
 
 def delete_task(task_id:int,db:Session=Depends(get_db)):
-    db_data = db.query(TaskModel).filter(TaskModel.id == task_id.id).first()
+    db_data = db.query(TaskModel).filter(TaskModel.id == task_id).first()
 
     if not db_data:
         raise HTTPException(status_code=400,detail="task not found!!")

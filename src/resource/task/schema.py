@@ -10,4 +10,3 @@ class TaskUpdateSchema(BaseModel):
     title : str
     description : str
     status : str
-    owner_id : int
