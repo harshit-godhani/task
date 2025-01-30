@@ -6,7 +6,7 @@ from src.database.database import get_db
 from fastapi.security import HTTPAuthorizationCredentials,HTTPBearer
 from src.utils.utils import SECRET_KEY,ALGORITHM,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token
 from datetime import timedelta
-import jwt
+from jose import jwt
 
 
 security = HTTPBearer()
@@ -32,7 +32,7 @@ def log_user(user:UserLoginSchema,db:Session= Depends(get_db)):
 def new_access_token(refresh_token:HTTPAuthorizationCredentials=Security(security)):
     token = refresh_token.credentials
 
-    payload = jwt.decode(token,SECRET_KEY,algorithm=ALGORITHM)
+    payload = jwt.decode(token,SECRET_KEY,ALGORITHM)
 
     new_access_token = create_access_token(
         data={"sub":payload["sub"]},

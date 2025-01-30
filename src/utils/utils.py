@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from passlib.context import CryptContext 
-import jwt
+from jose import jwt
 from datetime import datetime,timedelta
 
 

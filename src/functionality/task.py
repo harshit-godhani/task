@@ -50,12 +50,10 @@ def update_task(task:TaskUpdateSchema,db:Session=Depends(get_db)):
     if not data1:
         raise HTTPException(status_code=400,detail="Task not found!!")
     
-    task_db = TaskModel(
-        title=task.title,
-        description=task.description,
-        status=task.status,
-        owner_id=task.owner_id 
-    )
+    data1.title=task.title,
+    data1.description=task.description,
+    data1.status=task.status,
+    data1.owner_id=task.owner_id
 
     db.commit()
     return{
