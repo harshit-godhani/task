@@ -4,10 +4,15 @@ from src.resource.user.schema import UserCreateSchema,UserLoginSchema
 from src.functionality.user import Create_User,Login_User,admin_access_all_user_view,admin_access_to_user_delete
 from src.database.database import get_db
 from fastapi.security import HTTPAuthorizationCredentials,HTTPBearer
-from src.utils.utils import SECRET_KEY,ALGORITHM,ACCESS_TOKEN_EXPIRE_MINUTES,create_access_token
+from src.utils.utils import create_access_token
 from datetime import timedelta
 from jose import jwt
+from src.config import Config
 
+ALO = Config.ALGO
+SEC = Config.SEC_KEY
+ACCESS = Config.ACCESS_TOKEN_EXPIRE
+REFRESH = Config.REFRESH_TOKEN_EXPIRE
 
 security = HTTPBearer()
 user_router = APIRouter()
@@ -32,11 +37,11 @@ def log_user(user:UserLoginSchema,db:Session= Depends(get_db)):
 def new_access_token(refresh_token:HTTPAuthorizationCredentials=Security(security)):
     token = refresh_token.credentials
 
-    payload = jwt.decode(token,SECRET_KEY,ALGORITHM)
+    payload = jwt.decode(token,SEC,ALO)
 
     new_access_token = create_access_token(
         data={"sub":payload["sub"]},
-        expires_delta= timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+        expires_delta= timedelta(minutes=ACCESS)
     )
     return{"access_token":new_access_token}
 

@@ -65,7 +65,6 @@ def admin_access_to_user_delete(user:int,db:Session=Depends(get_db)):
         user1 = db.query(UserModel).filter(UserModel.id == user).first()
 
         if user1.role != 'admin':
-            db.query(UserModel).delete()
             raise HTTPException(status_code=403,detail="admin not found!")
         
         if user1.role != 'user':
@@ -74,6 +73,6 @@ def admin_access_to_user_delete(user:int,db:Session=Depends(get_db)):
                 "massaeg":"all user are delete"
             }
         
-        db.commit
+        db.commit()
     except Exception as e:  
         raise HTTPException(status_code=400,detail=str(e))
