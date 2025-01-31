@@ -26,7 +26,8 @@ def Create_User(user:UserCreateSchema,db:Session= Depends(get_db)):
     return{
         "Status": True,
         "massage": "User create successfully.",
-        "username": user_db.username
+        "username": user_db.username,
+        "user_id": user_db.id
     }
 
 def Login_User(user:UserLoginSchema,db: Session = Depends(get_db)):
