@@ -8,6 +8,7 @@ from src.utils.utils import create_access_token
 from datetime import timedelta
 from jose import jwt
 from src.config import Config
+from fastapi.testclient import TestClient
 
 ALO = Config.ALGO
 SEC = Config.SEC_KEY
@@ -16,6 +17,8 @@ REFRESH = Config.REFRESH_TOKEN_EXPIRE
 
 security = HTTPBearer()
 user_router = APIRouter()
+
+client = TestClient(user_router)
 
 @user_router.post("/create/user/",tags=["User"])
 def reg_user(user:UserCreateSchema,db:Session= Depends(get_db)):
@@ -61,4 +64,4 @@ def adm_acc_user_del(user:int,db:Session=Depends(get_db)):
     except Exception as e:
         raise HTTPException(status_code=500,detail=str(e))
 
-
+    
